@@ -1,14 +1,20 @@
 jobs:
   - job: Build
     steps:
+      - script: echo "### Steps exécutées: $(System.JobName)"
+        displayName: "Debug - Afficher les étapes du job"
+
+      - script: ls -la
+        displayName: "Debug - Vérifier le contenu du répertoire courant"
+
       - task: PowerShell@2
-        enabled: true
         displayName: "Install dependencies"
         inputs:
           targetType: 'inline'
           script: |
             npm ci
             npx playwright install --with-deps
+            npx playwright --version
           workingDirectory: TestCases/
 
       - task: AzureCLI@2
@@ -23,7 +29,7 @@ jobs:
           inlineScript: |
             echo "PLAYWRIGHT_SERVICE_URL: $env:PLAYWRIGHT_SERVICE_URL"
             echo "PLAYWRIGHT_SERVICE_RUN_ID: $env:PLAYWRIGHT_SERVICE_RUN_ID"
-            npx playwright test --config=playwright.service.config.js
+            npx playwright test --config=playwright.service.config.js --verbose
           addSpnToEnvironment: true
 
       - task: PublishPipelineArtifact@1
