@@ -1,36 +1,32 @@
 jobs:
   - job: Build
     steps:
-      - script: |
-          echo "### Steps exécutées: $(System.JobName)"
-        displayName: "Debug - Afficher les étapes du job"
-
-      - script: |
-          ls -la
-        displayName: "Debug - Vérifier le contenu du répertoire courant"
-
       - task: PowerShell@2
+        enabled: true
         displayName: "Install dependencies"
         inputs:
           targetType: 'inline'
-          script: |
-            npm ci
-            npx playwright install --with-deps
-            npx playwright --version
-          workingDirectory: TestCases/
-
-      - script: |
-          echo "PLAYWRIGHT_SERVICE_URL: $PLAYWRIGHT_SERVICE_URL"
-          echo "PLAYWRIGHT_SERVICE_RUN_ID: $BUILD_DEFINITIONNAME - $BUILD_BUILDNUMBER - $SYSTEM_JOBATTEMPT"
-          DEBUG=pw:api npx playwright test --config=playwright.service.config.js
-        displayName: "Run Playwright Test"
+          script: 'npm ci'
+          workingDirectory: TestCases/ # update accordingly
+ 
+      - task: AzureCLI@2
+        displayName: Run Playwright Test
         env:
           PLAYWRIGHT_SERVICE_URL: $(PLAYWRIGHT_SERVICE_URL)
           PLAYWRIGHT_SERVICE_RUN_ID: $(Build.DefinitionName) - $(Build.BuildNumber) - $(System.JobAttempt)
-
+        inputs:
+          azureSubscription: 'LoueyZormati' # Service connection used to authenticate this pipeline with Azure to use the service
+          scriptType: 'pscore'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            npx playwright test  --config=playwright.service.config.js           
+          addSpnToEnvironment: true
+          
+ 
       - task: PublishPipelineArtifact@1
         displayName: Upload Playwright report
         inputs:
-          targetPath: TestCases/test-results/playwright-report/
+          targetPath: TestCases/playwright-report/ # update accordingly
           artifact: 'Playwright tests'
           publishLocation: 'pipeline'
+ 
