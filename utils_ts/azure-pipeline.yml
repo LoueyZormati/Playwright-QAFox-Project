@@ -17,24 +17,14 @@ jobs:
             npx playwright --version
           workingDirectory: TestCases/
 
-      - task: AzureCLI@2
-        displayName: Run Playwright Test
+      - script: |
+          echo "PLAYWRIGHT_SERVICE_URL: $PLAYWRIGHT_SERVICE_URL"
+          echo "PLAYWRIGHT_SERVICE_RUN_ID: $BUILD_DEFINITIONNAME - $BUILD_BUILDNUMBER - $SYSTEM_JOBATTEMPT"
+          npx playwright test --config=playwright.service.config.js --verbose
+        displayName: "Run Playwright Test"
         env:
           PLAYWRIGHT_SERVICE_URL: $(PLAYWRIGHT_SERVICE_URL)
           PLAYWRIGHT_SERVICE_RUN_ID: $(Build.DefinitionName) - $(Build.BuildNumber) - $(System.JobAttempt)
-        inputs:
-          azureSubscription: 'LoueyZormati'
-          scriptType: 'pscore'
-          scriptLocation: 'inlineScript'
-          inlineScript: |
-            echo "PLAYWRIGHT_SERVICE_URL: $env:PLAYWRIGHT_SERVICE_URL"
-            echo "PLAYWRIGHT_SERVICE_RUN_ID: $env:PLAYWRIGHT_SERVICE_RUN_ID"
-            npx playwright test --config=playwright.service.config.js --verbose
-          addSpnToEnvironment: true
 
       - task: PublishPipelineArtifact@1
-        displayName: Upload Playwright report
-        inputs:
-          targetPath: TestCases/test-results/playwright-report/
-          artifact: 'Playwright tests'
-          publishLocation: 'pipeline'
+        displayName: Upload Pla
