@@ -1,10 +1,12 @@
 jobs:
   - job: Build
     steps:
-      - script: echo "### Steps exécutées: $(System.JobName)"
+      - script: |
+          echo "### Steps exécutées: $(System.JobName)"
         displayName: "Debug - Afficher les étapes du job"
 
-      - script: ls -la
+      - script: |
+          ls -la
         displayName: "Debug - Vérifier le contenu du répertoire courant"
 
       - task: PowerShell@2
@@ -27,4 +29,8 @@ jobs:
           PLAYWRIGHT_SERVICE_RUN_ID: $(Build.DefinitionName) - $(Build.BuildNumber) - $(System.JobAttempt)
 
       - task: PublishPipelineArtifact@1
-        displayName: Upload Pla
+        displayName: Upload Playwright report
+        inputs:
+          targetPath: TestCases/test-results/playwright-report/
+          artifact: 'Playwright tests'
+          publishLocation: 'pipeline'
