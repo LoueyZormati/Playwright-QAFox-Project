@@ -27,6 +27,6 @@ jobs:
         displayName: Upload Playwright report
         inputs:
           targetPath: playwright-report/ # update accordingly
-          artifact: 'Playwright tests'
+          artifact: '$(Build.ArtifactStagingDirectory)/playwright-report'
           publishLocation: 'pipeline'
  
