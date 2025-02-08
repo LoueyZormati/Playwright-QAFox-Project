@@ -27,6 +27,6 @@ jobs:
         displayName: Upload Playwright report
         inputs:
           targetPath: playwright-report/ # update accordingly
-          artifact: 'QAFOX/playwright-report/'
+          artifact: 'TestCases/playwright-report/'
           publishLocation: 'pipeline'
  
