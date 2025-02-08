@@ -22,7 +22,7 @@ jobs:
       - script: |
           echo "PLAYWRIGHT_SERVICE_URL: $PLAYWRIGHT_SERVICE_URL"
           echo "PLAYWRIGHT_SERVICE_RUN_ID: $BUILD_DEFINITIONNAME - $BUILD_BUILDNUMBER - $SYSTEM_JOBATTEMPT"
-          npx playwright test --config=playwright.service.config.js --verbose
+          DEBUG=pw:api npx playwright test --config=playwright.service.config.js
         displayName: "Run Playwright Test"
         env:
           PLAYWRIGHT_SERVICE_URL: $(PLAYWRIGHT_SERVICE_URL)
