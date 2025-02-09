@@ -23,10 +23,3 @@ jobs:
           addSpnToEnvironment: true
           
  
-      - task: PublishPipelineArtifact@1
-        displayName: Upload Playwright report
-        inputs:
-          targetPath: TestCases/playwright-report/ # update accordingly
-          artifact: 'playwright-report'
-          publishLocation: 'pipeline'
- 
