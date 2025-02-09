@@ -20,30 +20,37 @@ jobs:
           script: 'npm ci'
           workingDirectory: TestCases/
 
-      # Exécution de Playwright avec les tests
-      - task: AzureCLI@2
-        displayName: Run Playwright Test
-        env:
-          PLAYWRIGHT_SERVICE_URL: $(PLAYWRIGHT_SERVICE_URL)
-          PLAYWRIGHT_SERVICE_RUN_ID: $(Build.DefinitionName) - $(Build.BuildNumber) - $(System.JobAttempt)
-        inputs:
-          azureSubscription: 'LoueyZormati'
-          scriptType: 'pscore'
-          scriptLocation: 'inlineScript'
-          inlineScript: |
-            npx playwright test --config=playwright.service.config.js --workers=2           
-          addSpnToEnvironment: true
-
-      # Vérification de l'existence du rapport et publication de l'artefact
+      # Exécution des tests Playwright
       - task: PowerShell@2
-        displayName: "Publish Playwright report"
+        displayName: "Run Playwright Tests"
+        inputs:
+          targetType: 'inline'
+          script: 'npx playwright test --config=playwright.config.js'
+          workingDirectory: TestCases/
+
+      # Vérification de l'existence du rapport avant publication
+      - task: PowerShell@2
+        displayName: "Check Playwright Report"
         inputs:
           targetType: 'inline'
           script: |
-            $reportPath = "TestCases/playwright-report-$(Build.BuildId)"
+            $reportPath = "TestCases/playwright-report"
+            Write-Host "Checking if report exists at $reportPath"
+            if (Test-Path $reportPath) {
+              Write-Host "Report exists!"
+            } else {
+              Write-Host "Report does not exist!"
+            }
+
+      # Publier le rapport Playwright
+      - task: PowerShell@2
+        displayName: "Publish Playwright Report"
+        inputs:
+          targetType: 'inline'
+          script: |
+            $reportPath = "TestCases/playwright-report"
             if (Test-Path $reportPath) {
               Write-Host "Report exists, publishing..."
-              # Publier l'artefact avec la tâche PublishPipelineArtifact
               Write-Host "##vso[artifact.upload artifactname=playwright-report;targetpath=$(Build.SourcesDirectory)/$reportPath;publishlocation=Container]"
             } else {
               Write-Host "Report does not exist, skipping publish step."
