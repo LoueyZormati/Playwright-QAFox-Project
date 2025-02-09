@@ -9,7 +9,7 @@ const HomePage=POmanager.getHomePage();
 const LoginPage=POmanager.getLoginPage();
 await HomePage.ClickMyAccount();
 await HomePage.ClickLogin();
-await LoginPage.LoginStatic("lhda@Testawy.com","esha") ;
+await LoginPage.LoginStatic("loueyzormati322@gmail.com","louey123ZO!98")  ;
 await HomePage.ClickButtonHome();
 await HomePage.AddProductToWishList("MacBook");
 await HomePage.VerfySuccesMessage();

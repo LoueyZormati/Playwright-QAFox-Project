@@ -36,6 +36,6 @@ test("Login With valid Credentiels",async ({page})=>{
     const HomePage=POmanager.getHomePage();
     await HomePage.ClickMyAccount();
     await HomePage.ClickLogin();
-    await LoginPage.LoginStatic("lhda@Testawy.com","esha") ;
+    await LoginPage.LoginStatic("loueyzormati322@gmail.com","louey123ZO!98") ;
     await expect(page).toHaveURL('https://tutorialsninja.com/demo/index.php?route=account/account');
 })
