@@ -1,57 +1,32 @@
 jobs:
   - job: Build
     steps:
-      # Nettoyage du rapport précédent
-      - task: PowerShell@2
-        displayName: "Clean Playwright Report"
-        inputs:
-          targetType: 'inline'
-          script: |
-            if (Test-Path "TestCases/playwright-report") {
-              Remove-Item -Recurse -Force "TestCases/playwright-report"
-            }
-
-      # Installation des dépendances
       - task: PowerShell@2
         enabled: true
         displayName: "Install dependencies"
         inputs:
           targetType: 'inline'
           script: 'npm ci'
-          workingDirectory: TestCases/
-
-      # Exécution des tests Playwright
-      - task: PowerShell@2
-        displayName: "Run Playwright Tests"
+          workingDirectory: TestCases/ # update accordingly
+ 
+      - task: AzureCLI@2
+        displayName: Run Playwright Test
+        env:
+          PLAYWRIGHT_SERVICE_URL: $(PLAYWRIGHT_SERVICE_URL)
+          PLAYWRIGHT_SERVICE_RUN_ID: $(Build.DefinitionName) - $(Build.BuildNumber) - $(System.JobAttempt)
         inputs:
-          targetType: 'inline'
-          script: 'npx playwright test --config=playwright.config.js'
-          workingDirectory: TestCases/
-
-      # Vérification de l'existence du rapport avant publication
-      - task: PowerShell@2
-        displayName: "Check Playwright Report"
+          azureSubscription: 'LoueyZormati' # Service connection used to authenticate this pipeline with Azure to use the service
+          scriptType: 'pscore'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            npx playwright test --config=playwright.service.config.js --workers=2           
+          addSpnToEnvironment: true
+          
+ 
+      - task: PublishPipelineArtifact@1
+        displayName: Upload Playwright report
         inputs:
-          targetType: 'inline'
-          script: |
-            $reportPath = "TestCases/playwright-report"
-            Write-Host "Checking if report exists at $reportPath"
-            if (Test-Path $reportPath) {
-              Write-Host "Report exists!"
-            } else {
-              Write-Host "Report does not exist!"
-            }
-
-      # Publier le rapport Playwright
-      - task: PowerShell@2
-        displayName: "Publish Playwright Report"
-        inputs:
-          targetType: 'inline'
-          script: |
-            $reportPath = "TestCases/playwright-report"
-            if (Test-Path $reportPath) {
-              Write-Host "Report exists, publishing..."
-              Write-Host "##vso[artifact.upload artifactname=playwright-report;targetpath=$(Build.SourcesDirectory)/$reportPath;publishlocation=Container]"
-            } else {
-              Write-Host "Report does not exist, skipping publish step."
-            }
+          targetPath: TestCases/playwright-report/ # update accordingly
+          artifact: 'playwright-report'
+          publishLocation: 'pipeline'
+ 
