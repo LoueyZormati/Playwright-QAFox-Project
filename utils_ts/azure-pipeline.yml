@@ -40,7 +40,7 @@ jobs:
         inputs:
           targetType: 'inline'
           script: |
-            $reportPath = "TestCases/playwright-report"
+            $reportPath = "TestCases/playwright-report-$(Build.BuildId)"
             if (Test-Path $reportPath) {
               Write-Host "Report exists, publishing..."
               # Publier l'artefact avec la tâche PublishPipelineArtifact
