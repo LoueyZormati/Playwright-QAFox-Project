@@ -34,7 +34,7 @@ jobs:
             npx playwright test --config=playwright.service.config.js --workers=2           
           addSpnToEnvironment: true
 
-      # Vérification et publication du rapport seulement si le dossier existe
+      # Vérification de l'existence du rapport et publication de l'artefact
       - task: PowerShell@2
         displayName: "Publish Playwright report"
         inputs:
@@ -43,8 +43,8 @@ jobs:
             $reportPath = "TestCases/playwright-report"
             if (Test-Path $reportPath) {
               Write-Host "Report exists, publishing..."
-              # Publier l'artefact
-              Write-Host "##vso[artifact.upload artifactname=playwright-report]$reportPath"
+              # Publier l'artefact avec la tâche PublishPipelineArtifact
+              Write-Host "##vso[artifact.upload artifactname=playwright-report;targetpath=$(Build.SourcesDirectory)/$reportPath;publishlocation=Container]"
             } else {
               Write-Host "Report does not exist, skipping publish step."
             }
