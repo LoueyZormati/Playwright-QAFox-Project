@@ -5,7 +5,6 @@ module.exports = defineConfig({
   fullyParallel: true,
   reporter: [['html', { outputFolder: 'playwright-report', open: 'never' }]],
 
-  // Définir plusieurs projets pour différents navigateurs
   projects: [
     {
       name: 'chromium',
@@ -22,7 +21,7 @@ module.exports = defineConfig({
   ],
 
   use: {
-    headless: false, // Exécuter en mode headful (visible) ou headless (invisible)
+    headless: false, 
     video: 'retain-on-failure',
     screenshot: 'on',
     trace: 'retain-on-failure',

@@ -8,7 +8,7 @@ export default defineConfig(
     exposeNetwork: '<loopback>',
     timeout: 30000,
     os: ServiceOS.LINUX,
-    useCloudHostedBrowsers: true, // Utilisation des navigateurs hébergés dans le cloud
+    useCloudHostedBrowsers: true, 
   }),
   {
     reporter: [['list'], ['@azure/microsoft-playwright-testing/reporter']],
