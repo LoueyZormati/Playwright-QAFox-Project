@@ -17,10 +17,6 @@ export default defineConfig(
     This will override any reporter options specified in the base playwright config.
     If you are using more reporters, please update your configuration accordingly.
     */
-    reporter: [
-      ['list'],
-      ['@azure/microsoft-playwright-testing/reporter'],
-      ['html', { outputFolder: 'playwright-report', open: 'never' }]  // Ajout du reporter html ici
-    ],
+    reporter: [['list'], ['@azure/microsoft-playwright-testing/reporter']],
   }
 );
