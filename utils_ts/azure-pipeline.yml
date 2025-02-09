@@ -2,31 +2,38 @@ jobs:
   - job: Build
     steps:
       - task: PowerShell@2
+        displayName: "Clean Playwright Report"
+        inputs:
+          targetType: 'inline'
+          script: |
+            if (Test-Path "TestCases/playwright-report") {
+              Remove-Item -Recurse -Force "TestCases/playwright-report"
+            }
+
+      - task: PowerShell@2
         enabled: true
         displayName: "Install dependencies"
         inputs:
           targetType: 'inline'
           script: 'npm ci'
-          workingDirectory: TestCases/ # update accordingly
- 
+          workingDirectory: TestCases/
+
       - task: AzureCLI@2
         displayName: Run Playwright Test
         env:
           PLAYWRIGHT_SERVICE_URL: $(PLAYWRIGHT_SERVICE_URL)
           PLAYWRIGHT_SERVICE_RUN_ID: $(Build.DefinitionName) - $(Build.BuildNumber) - $(System.JobAttempt)
         inputs:
-          azureSubscription: 'LoueyZormati' # Service connection used to authenticate this pipeline with Azure to use the service
+          azureSubscription: 'LoueyZormati'
           scriptType: 'pscore'
           scriptLocation: 'inlineScript'
           inlineScript: |
             npx playwright test --config=playwright.service.config.js --workers=2           
           addSpnToEnvironment: true
-          
- 
+
       - task: PublishPipelineArtifact@1
         displayName: Upload Playwright report
         inputs:
-          targetPath: TestCases/playwright-report/ # update accordingly
+          targetPath: TestCases/playwright-report/
           artifact: 'playwright-report'
           publishLocation: 'pipeline'
- 
